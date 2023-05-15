@@ -1,28 +1,32 @@
 'use client';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BreadCrumb from './BreadCrumb';
 import Cart from './Cart';
+import MobileNavigation from './MobileNavigation';
+import { State } from '@/app/page';
 
-const Navbar = () => {
-	const [cartHovered, setCartHovered] = useState(false);
-	const [isCartVisible, setCartVisible] = useState(false);
-	const [products, setProducts] = useState([
-		{
-			id: 1,
-			name: 'Fall Limited Edition Sneakers',
-			price: 125,
-			image: 'image-product-1.jpg',
-			quantity: 3,
-		},
-		{
-			id: 2,
-			name: 'Autumn Limited Edition Sneakers',
-			price: 135,
-			image: 'image-product-2.jpg',
-			quantity: 2,
-		},
-	]);
+type Props = {
+	state: State;
+	setState: React.Dispatch<React.SetStateAction<State>>;
+};
+
+const Navbar = ({ state, setState }: Props) => {
+	useEffect(() => {
+		const checkMobile = () => {
+			if (window.innerWidth <= 640) {
+				setState({ ...state, isMobile: true });
+			} else {
+				setState({ ...state, isMobile: false });
+			}
+		};
+
+		checkMobile();
+		window.addEventListener('resize', checkMobile);
+		return () => {
+			window.removeEventListener('resize', checkMobile);
+		};
+	}, []);
 
 	const links = [
 		{
@@ -58,25 +62,45 @@ const Navbar = () => {
 	];
 
 	const handleDelete = (id: number) => {
-		const newProducts = products.filter((product) => product.id !== id);
-		setProducts(newProducts);
+		setState({ ...state, cart: null });
 	};
 
 	return (
-		<nav className='relative px-6 pt-5 pb-5 lg:px-0 lg:pb-0 lg:pt-10 flex items-center justify-between border-b border-grayish-blue'>
+		<nav className='px-6 pt-5 pb-5 lg:px-0 lg:pb-0 lg:pt-8 flex items-center justify-between border-b border-grayish-blue'>
+			<MobileNavigation
+				links={links}
+				isVisible={state.isMobileNavVisible}
+				onClose={() =>
+					setState({ ...state, isMobileNavVisible: false })
+				}
+			/>
 			<Cart
 				onDelete={handleDelete}
-				isVisible={isCartVisible}
-				products={products}
+				isVisible={state.isCartVisible}
+				isMobile={state.isMobile}
+				product={state.cart}
 			/>
 			<div className='flex items-start gap-14'>
-				<Image
-					src={require('../../../public/images/logo.svg')}
-					alt='logo'
-				/>
+				<div className='flex items-center gap-4'>
+					<button
+						className='lg:hidden'
+						onClick={() =>
+							setState({ ...state, isMobileNavVisible: true })
+						}
+					>
+						<Image
+							src={require('../../../public/images/icon-menu.svg')}
+							alt='menu'
+						/>
+					</button>
+					<Image
+						src={require('../../../public/images/logo.svg')}
+						alt='logo'
+					/>
+				</div>
 				<div className='hidden lg:flex gap-8 items-center flex-1'>
 					{links.map((link, index) => (
-						<span className='h-16 w-14 hover:border-b-4 hover:border-b-orange flex justify-center'>
+						<span className='h-14 w-14 hover:border-b-4 hover:border-b-orange flex justify-center'>
 							<a
 								href={link.path}
 								key={index}
@@ -87,19 +111,24 @@ const Navbar = () => {
 						</span>
 					))}
 				</div>
-				{/* <BreadCrumb
-					links={links}
-					className='absolute bottom-0 left-48'
-				/> */}
 			</div>
-			<div className='flex items-center gap-10 lg:-translate-y-5'>
+			<div className='flex items-center gap-4 md:gap-10 lg:-translate-y-5'>
 				<span
-					onMouseOver={() => setCartHovered(true)}
-					onMouseOut={() => setCartHovered(false)}
-					onClick={() => setCartVisible(!isCartVisible)}
+					onMouseOver={() =>
+						setState({ ...state, cartHovered: true })
+					}
+					onMouseOut={() =>
+						setState({ ...state, cartHovered: false })
+					}
+					onClick={() =>
+						setState({
+							...state,
+							isCartVisible: !state.isCartVisible,
+						})
+					}
 					className='duration-200 cursor-pointer'
 				>
-					{cartHovered ? (
+					{state.cartHovered ? (
 						<svg
 							width='22'
 							height='20'

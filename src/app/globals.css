@@ -2,26 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+
+
+/* Scrollbar */
+/* For Webkit browsers */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+::-webkit-scrollbar-track {
+  background-color: hsl(0, 0%, 75%);
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+::-webkit-scrollbar-thumb {
+  background-color: hsl(220, 13%, 13%);
+  border-radius: 6px;
+}
+
+/* For Firefox */
+* {
+  scrollbar-color: hsl(220, 13%, 13%) hsl(0, 0%, 75%);
+  scrollbar-width: thin;
+}
+
+.scroll-tight {
+  scrollbar-width: thin;
+  /* Width of the scrollbar */
+  scrollbar-color: gray lightgray;
+  /* Color of the scrollbar */
+}
+
+.scroll-tight::-webkit-scrollbar {
+  width: 2px;
+}
+
+.scroll-tight::-webkit-scrollbar-thumb {
+  background: gray;
+}
+
+.max-h-56.overflow-y-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: darkgray;
+}
+
+
+.absolute-center-h {
+  @apply absolute left-1/2 transform -translate-x-1/2;
+}
+
+.absolute-center-v {
+  @apply absolute top-1/2 transform -translate-y-1/2;
+}
+
+.absolute-center-both {
+  @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
 }
