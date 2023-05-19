@@ -51,43 +51,39 @@ const Product = ({ state, setState }: Props) => {
 	};
 
 	const handlePreviousImage = () => {
-		const currentImageIndex = state.product?.images.findIndex(
-			(image) => image.id === state.currentProductImageId
-		);
+		const {
+			currentProductImageId,
+			product: { images },
+		} = state;
 
-		if (currentImageIndex === 0) {
+		if (currentProductImageId === 1) {
 			setState({
 				...state,
-				currentProductImageId:
-					state.product?.images[state.product?.images.length - 1].id!,
+				currentProductImageId: images.length,
 			});
 		} else {
 			setState({
 				...state,
-				currentProductImageId:
-					state.product?.images[currentImageIndex! - 1].id!,
+				currentProductImageId: currentProductImageId - 1,
 			});
 		}
 	};
 
 	const handleNextImage = () => {
-		const currentImageIndex = state.product?.images.findIndex(
-			(image) => image.id === state.currentProductImageId
-		);
+		const {
+			currentProductImageId,
+			product: { images },
+		} = state;
 
-		if (
-			currentImageIndex ===
-			state.product?.images[state.product?.images.length - 1].id
-		) {
+		if (currentProductImageId === images.length) {
 			setState({
 				...state,
-				currentProductImageId: state.product?.images[0].id!,
+				currentProductImageId: images[0].id,
 			});
 		} else {
 			setState({
 				...state,
-				currentProductImageId:
-					state.product?.images[currentImageIndex! + 1].id!,
+				currentProductImageId: currentProductImageId + 1,
 			});
 		}
 	};
@@ -115,10 +111,11 @@ const Product = ({ state, setState }: Props) => {
 					<Image
 						alt=''
 						src={require(`../../../public/images/${currentProductImage?.src}`)}
-						className='xs:rounded-lg sm:rounded-xl'
-						onClick={() =>
-							setState({ ...state, isLightboxVisible: true })
-						}
+						className='xs:rounded-lg sm:rounded-xl cursor-pointer'
+						onClick={() => {
+							if (state.isMobile) return;
+							setState({ ...state, isLightboxVisible: true });
+						}}
 					/>
 					<button
 						onClick={handleNextImage}

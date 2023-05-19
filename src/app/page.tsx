@@ -17,7 +17,7 @@ export type Product = {
 };
 
 export type State = {
-	product: Product | null;
+	product: Product;
 	currentProductImageId: number;
 	cart: Product | null;
 	isMobile: boolean;
