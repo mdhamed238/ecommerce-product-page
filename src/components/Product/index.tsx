@@ -40,6 +40,20 @@ const Product = ({ state, setState }: Props) => {
 	const handleAddToCart = () => {
 		if (state.product?.quantity! < 1) return;
 
+		if (state.cart && state.product.id === state.cart?.id) {
+			setState({
+				...state,
+				cart: {
+					...state.cart,
+					quantity: state.product.quantity,
+				},
+				product: {
+					...state.product,
+					quantity: 0,
+				},
+			});
+			return;
+		}
 		setState({
 			...state,
 			cart: state.product,
@@ -139,17 +153,26 @@ const Product = ({ state, setState }: Props) => {
 								})
 							}
 						>
-							<Image
-								alt=''
-								src={require(`../../../public/images/${image.src}`)}
+							<div
 								className={classNames(
-									'rounded-lg',
+									'relative rounded-lg border-2 w-[70px]',
 									image.id === state.currentProductImageId
-										? 'opacity-50'
-										: 'hover:opacity-60 duration-200'
+										? 'border-orange'
+										: 'border-transparent'
 								)}
-								width={70}
-							/>
+							>
+								<Image
+									alt=''
+									src={require(`../../../public/images/${image.src}`)}
+									className={classNames(
+										'rounded-md object-fill w-full h-full',
+										image.id === state.currentProductImageId
+											? 'opacity-50 rounded-lg'
+											: 'hover:opacity-60 duration-200'
+									)}
+								/>
+								<div className='absolute top-0 left-0 w-full h-full bg-white opacity-0 transition-opacity duration-200 ease-in-out group-hover:opacity-70'></div>
+							</div>
 						</button>
 					))}
 				</div>
